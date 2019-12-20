@@ -1,31 +1,27 @@
 #!/usr/bin/python3
-"""This is the state class"""
+"""
+This module contains one class, State
+"""
 
-from models.base_model import BaseModel
-from models.city import City
-from models.base_model import Base
+from models.base_model import BaseModel, Base
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship
-import models
-import os
 
 
 class State(BaseModel, Base):
-    """This is the class for State
-    Attributes:
-        name: input name
+    """State has a name and relationship to cities objs
     """
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
-    if os.environ.get('HBNB_TYPE_STORAGE') == 'db':
-        cities = relationship("City", backref="states", cascade="delete")
-    else:
-        @property
-        def cities(self):
-            """FileStorage relationship between State and City """
-            cities = models.storage.all(City)
-            cities_relation = []
-            for city in cities.values():
-                if city.state_id == self.id:
-                    cities_relation = cities_relation.append(city)
-            return cities_relation
+    cities = relationship(
+        "City",
+        cascade="all,delete,delete-orphan",
+        backref=backref("state", cascade="all,delete,delete-orphan"),
+        passive_deletes=True,
+        single_parent=True)
+
+    @property
+    def cities(self):
+        """return a dict of City instances with state_id"""
+        return {k: v for k, v in storage.all().items()
+                if v.state_id == self.id}
