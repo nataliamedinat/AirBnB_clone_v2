@@ -13,7 +13,7 @@ from models.review import Review
 from shlex import split
 from sqlalchemy import Table, Column, Integer, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarativebase
+from sqlalchemy.ext.declarative import declarative_base
 
 class HBNBCommand(cmd.Cmd):
     """this class is entry point of the command interpreter
@@ -59,6 +59,7 @@ class HBNBCommand(cmd.Cmd):
                     setattr(obj, values[0], float(values[1]))
                 else:
                     setattr(obj, values[0], int(values[1]))
+
             obj.save()
             print("{}".format(obj.id))
         except SyntaxError:
