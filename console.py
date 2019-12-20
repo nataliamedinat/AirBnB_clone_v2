@@ -11,6 +11,7 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from shlex import split
+import copy
 
 
 class HBNBCommand(cmd.Cmd):
@@ -125,17 +126,15 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, line):
         """Prints all string representation of all instances
         Exceptions:
-            NameError: when there is no object taht has the name
+            NameError: when there is no object that has the name
         """
-        classes = {"State": State}
-        if line in classes:
-            objects = storage.all(classes[line])
-        else:
-            objects = storage.all()
+        objects = storage.all()
         my_list = []
         if not line:
             for key in objects:
-                my_list.append(objects[key])
+                new_obj = copy.deepcopy(objects[key])
+                del new_obj.__dict__["_sa_instance_state"]
+                my_list.append(new_obj)
             print(my_list)
             return
         try:
@@ -145,7 +144,9 @@ class HBNBCommand(cmd.Cmd):
             for key in objects:
                 name = key.split('.')
                 if name[0] == args[0]:
-                    my_list.append(objects[key])
+                    new_obj = copy.deepcopy(objects[key])
+                    del new_obj.__dict__["_sa_instance_state"]
+                    my_list.append(new_obj)
             print(my_list)
         except NameError:
             print("** class doesn't exist **")
