@@ -19,6 +19,7 @@ This is the console /command interpreter for the Holberton Airbnb clone project.
 * quit/EOF - quit the console
 * help - see descriptions of commands
 
+
 To start, navigate to the project folder and enter `./console.py` in the shell.
 
 #### Create

@@ -11,9 +11,8 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from shlex import split
-from sqlalchemy import Table, Column, Integer, ForeignKey
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
+import copy
+
 
 class HBNBCommand(cmd.Cmd):
     """this class is entry point of the command interpreter
@@ -45,23 +44,36 @@ class HBNBCommand(cmd.Cmd):
                 raise SyntaxError()
             my_list = line.split(" ")
             obj = eval("{}()".format(my_list[0]))
-            for i in my_list[1:]:
-                if "=" not in param:
-                    continue
-                values = param.split("=")
-                
-                if values[1].startswith('"') and values[1].endswith('"'):
-                    if "_" in values[1]:
-                        values[1] = values[1].replace("_", " ")
-                    values[1] = values[1].replace('"', '')
-                    setattr(obj, values[0], values[1])
-                elif "." in values[1]:
-                    setattr(obj, values[0], float(values[1]))
-                else:
-                    setattr(obj, values[0], int(values[1]))
+            for command in my_list[1:]:
+                flag = True
+                parameters = command.split("=")
+                if parameters[1][0] == '"' and parameters[1][-1] == '"':
+                    parameters[1] = parameters[1].replace('_', ' ')
+                    aux_parameters = parameters[1][1:-1]
+                    for idn, character in enumerate(aux_parameters):
+                        if character == '"':
+                            if idn != 0 and aux_parameters[idn - 1] == '\\':
+                                continue
+                            else:
+                                flag = False
+                                break
+                    parameters[1] = aux_parameters
 
+                else:
+                    if '.' in parameters[1]:
+                        try:
+                            parameters[1] = float(parameters[1])
+                        except:
+                            flag = False
+                    else:
+                        try:
+                            parameters[1] = int(parameters[1])
+                        except:
+                            flag = False
+                if flag:
+                    obj.__dict__[parameters[0]] = parameters[1]
             obj.save()
-            print("{}".format(obj.id))
+            print("{}".format(obj.idn))
         except SyntaxError:
             print("** class name missing **")
         except NameError:
@@ -72,8 +84,8 @@ class HBNBCommand(cmd.Cmd):
         Exceptions:
             SyntaxError: when there is no args given
             NameError: when there is no object taht has the name
-            IndexError: when there is no id given
-            KeyError: when there is no valid id given
+            IndexError: when there is no idn given
+            KeyError: when there is no validn idn given
         """
         try:
             if not line:
@@ -94,17 +106,17 @@ class HBNBCommand(cmd.Cmd):
         except NameError:
             print("** class doesn't exist **")
         except IndexError:
-            print("** instance id missing **")
+            print("** instance idn missing **")
         except KeyError:
             print("** no instance found **")
 
     def do_destroy(self, line):
-        """Deletes an instance based on the class name and id
+        """Deletes an instance based on the class name and idn
         Exceptions:
             SyntaxError: when there is no args given
-            NameError: when there is no object taht has the name
-            IndexError: when there is no id given
-            KeyError: when there is no valid id given
+            NameError: when there is no object that has the name
+            IndexError: when there is no idn given
+            KeyError: when there is no validn idn given
         """
         try:
             if not line:
@@ -126,20 +138,30 @@ class HBNBCommand(cmd.Cmd):
         except NameError:
             print("** class doesn't exist **")
         except IndexError:
-            print("** instance id missing **")
+            print("** instance idn missing **")
         except KeyError:
             print("** no instance found **")
 
     def do_all(self, line):
         """Prints all string representation of all instances
         Exceptions:
-            NameError: when there is no object taht has the name
+            NameError: when there is no object that has the name
         """
         objects = storage.all()
+        copy_objs = copy.deepcopy(objects)
         my_list = []
         if not line:
-            for key in objects:
+            """for key in objects:
                 my_list.append(objects[key])
+            """
+            for key, obj in copy_objs.items():
+                aux_obj = obj.__dict__
+                try:
+                    del aux_obj['_sa_instance_state']
+                except:
+                    pass
+            for key_1 in copy_objs:
+                my_list.append(copy_objs[key_1])
             print(my_list)
             return
         try:
@@ -155,12 +177,12 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
     def do_update(self, line):
-        """Updates an instanceby adding or updating attribute
+        """Updates an instance by adding or updating attribute
         Exceptions:
             SyntaxError: when there is no args given
-            NameError: when there is no object taht has the name
-            IndexError: when there is no id given
-            KeyError: when there is no valid id given
+            NameError: when there is no object that has the name
+            IndexError: when there is no idn given
+            KeyError: when there is no validn idn given
             AttributeError: when there is no attribute given
             ValueError: when there is no value given
         """
@@ -191,7 +213,7 @@ class HBNBCommand(cmd.Cmd):
         except NameError:
             print("** class doesn't exist **")
         except IndexError:
-            print("** instance id missing **")
+            print("** instance idn missing **")
         except KeyError:
             print("** no instance found **")
         except AttributeError:
@@ -221,21 +243,21 @@ class HBNBCommand(cmd.Cmd):
         Args:
             args: input list of args
         Return:
-            returns string of argumetns
+            returns string of arguments
         """
         new_list = []
         new_list.append(args[0])
         try:
             my_dict = eval(
-                args[1][args[1].find('{'):args[1].find('}')+1])
+                args[1][args[1].find('{'):args[1].find('}') + 1])
         except Exception:
             my_dict = None
         if isinstance(my_dict, dict):
-            new_str = args[1][args[1].find('(')+1:args[1].find(')')]
+            new_str = args[1][args[1].find('(') + 1:args[1].find(')')]
             new_list.append(((new_str.split(", "))[0]).strip('"'))
             new_list.append(my_dict)
             return new_list
-        new_str = args[1][args[1].find('(')+1:args[1].find(')')]
+        new_str = args[1][args[1].find('(') + 1:args[1].find(')')]
         new_list.append(" ".join(new_str.split(", ")))
         return " ".join(i for i in new_list)
 
