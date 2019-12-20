@@ -5,7 +5,7 @@ import models
 from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Integer, String, Text, Binary, Column
+from sqlalchemy import String, Column, DateTime
 
 Base = declarative_base()
 
@@ -14,7 +14,7 @@ class BaseModel:
     """This class will defines all common attributes/methods
     for other classes
        Class A ttributes:
-       id : Represents a column containing a unique string, 60 chars, not null, primry key
+       id : column containing a unique string,60 chars,not null,primry key
        created_at : Represents a column containing a datetime
        updated_at : Represents a column containing a datetime
     """
