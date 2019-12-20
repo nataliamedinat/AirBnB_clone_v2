@@ -1,5 +1,7 @@
 #!/usr/bin/python3
+
 """ Class for DBStorage """
+
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy import create_engine
 from os import getenv
@@ -29,28 +31,29 @@ class DBStorage:
                                        getenv("HBNB_MYSQL_PWD"),
                                        getenv("HBNB_MYSQL_HOST"),
                                        getenv("HBNB_MYSQL_DB")), pool_pre_ping=True)
+        Base.metadata.create_all(self.__engine)
+        Session = sessionmaker(bind=self.__engine)
+        self.__session = Session()
 
         if getenv("HBNB_ENV") == "test":
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """ Returns a dictionary
-            Query objects from the current db, based on the class name
-        """
-        m_list = ["State", "City", "User"]
-        return_dict = {}
+        """Show all classes"""
+        all_classes = ["State", "City", "User", "Place", "Review", "Amenity"]
+        obj_dict = {}
         if cls is None:
-            for table in m_list:
-                query = self.__session.query(eval(table)).all()
+            for class_name in all_classes:
+                query = self.__session.query(eval(class_name)).all()
                 for obj in query:
-                    key = "{}.{}".format(type(obj).__name__, obj.id)
-                    return_dict[key] = obj
+                    key = obj.__class__.__name__ + '.' + obj.id
+                    obj_dict[key] = obj
         else:
             query = self.__session.query(eval(cls)).all()
             for obj in query:
-                key = "{}.{}".format(type(obj).__name__, obj.id)
-                return_dict[key] = obj
-        return return_dict
+                key = obj.__class__.__name__ + '.' + obj.id
+                obj_dict[key] = obj
+        return obj_dict
 
     def new(self, obj):
         """ Add the object to the current dtabase session """
@@ -67,8 +70,8 @@ class DBStorage:
             self.__session.delete(obj)
 
     def reload(self):
-        """ Create all the tables in the database """
-
+        """Create all tables in the database"""
         Base.metadata.create_all(self.__engine)
-        self.__session = scoped_session(sessionmaker(bin=self.__engine,
-                                                     expire_on_commit=False))
+        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        Session = scoped_session(session_factory)
+        self.__session = Session()
