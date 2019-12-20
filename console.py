@@ -11,7 +11,9 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 from shlex import split
-
+from sqlalchemy import Table, Column, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarativebase
 
 class HBNBCommand(cmd.Cmd):
     """this class is entry point of the command interpreter
@@ -43,14 +45,20 @@ class HBNBCommand(cmd.Cmd):
                 raise SyntaxError()
             my_list = line.split(" ")
             obj = eval("{}()".format(my_list[0]))
-            for i in range(1, len(my_list)):
-                my_values = my_list[i].split('=')
-                key = key_value[0]
-                value = key_value[1]
-                if value[0] == '"':
-                    value = value.replace('"', '')
-                    value = value.replace('_', ' ')
-                setattr(obj, key, value)
+            for i in my_list[1:]:
+                if "=" not in param:
+                    continue
+                values = param.split("=")
+                
+                if values[1].startswith('"') and values[1].endswith('"'):
+                    if "_" in values[1]:
+                        values[1] = values[1].replace("_", " ")
+                    values[1] = values[1].replace('"', '')
+                    setattr(obj, values[0], values[1])
+                elif "." in values[1]:
+                    setattr(obj, values[0], float(values[1]))
+                else:
+                    setattr(obj, values[0], int(values[1]))
             obj.save()
             print("{}".format(obj.id))
         except SyntaxError:
