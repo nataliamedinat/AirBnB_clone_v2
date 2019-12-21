@@ -57,8 +57,8 @@ class Place(BaseModel, Base):
             :return: list of amenity instances
             """
             amenity_list = []
-            results = models.storage.all(Amenity)
-            for amenity in results.values():
+            result = models.storage.all(Amenity)
+            for amenity in result.values():
                 if amenity.id in self.amenity_ids:
                     amenity_list.append(amenity)
             return amenity_list
@@ -78,9 +78,9 @@ class Place(BaseModel, Base):
         Getter attribute reviews
         :return: the list of reviews
         """
-        review_dict = {}
+        _dict = {}
         objs_ = models.storage.all(Review)
         for key, value in objs_.items():
             if value.place_id == self.id:
-                review_dict[key] = value
-        return review_dict
+                _dict[key] = value
+        return _dict
