@@ -49,17 +49,17 @@ class HBNBCommand(cmd.Cmd):
             for param in my_list[1:]:
                 if "=" not in param:
                     continue
-                keyv = param.split("=")
+                key = param.split("=")
                 
-                if keyv[1].startswith('"') and keyv[1].endswith('"'):
-                    if "_" in keyv[1]:
-                        keyv[1] = keyv[1].replace("_", " ")
-                    keyv[1] = keyv[1].replace('"', '')
-                    setattr(obj, keyv[0], keyv[1])
-                elif "." in keyv[1]:
-                    setattr(obj, keyv[0], float(keyv[1]))
+                if key[1].startswith('"') and key[1].endswith('"'):
+                    if "_" in key[1]:
+                        key[1] = key[1].replace("_", " ")
+                    key[1] = key[1].replace('"', '')
+                    setattr(obj, key[0], key[1])
+                elif "." in key[1]:
+                    setattr(obj, key[0], float(key[1]))
                 else:
-                    setattr(obj, keyv[0], int(keyv[1]))
+                    setattr(obj, key[0], int(key[1]))
                     
             obj.save()
             print("{}".format(obj.id))
