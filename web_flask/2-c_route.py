@@ -10,13 +10,13 @@ def hbnb():
     return 'Hello HBNB!'
 
 
-@app.route('/hbnb')
+@app.route('/hbnb', strict_slashes=False)
 def display_hbnb():
     """ Flask """
     return 'HBNB'
 
 
-@app.route('/c/<text>')
+@app.route('/c/<text>', strict_slashes=False)
 def c_isfun():
     """ Display c followed by the value of the text variable """
     return "C {}".format(text.replace("_", " "))
