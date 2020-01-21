@@ -32,7 +32,7 @@ def python_iscool(text):
 @app.route('/number/<int:n>', strict_slashes=False)
 def is_number(n):
     """ """
-    return "{} is a number".fomrat(n)
+    return "{} is a number".format(n)
 
 
 if __name__ == '__main__':
