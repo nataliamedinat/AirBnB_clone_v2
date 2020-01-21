@@ -19,7 +19,7 @@ def display_hbnb():
 @app.route('/c/<text>')
 def c_isfun():
     """ Display c followed by the value of the text variable """
-    return 'C %s' % text
+    return "C {}".format(text.replace("_", " "))
 
 
 if __name__ == '__main__':
