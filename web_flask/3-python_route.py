@@ -23,7 +23,7 @@ def c_isfun(text):
 
 
 @app.route('/python/', defaults={"text": "is_cool"})
-@app.route('/python/(<text>)', strict_slashes=False)
+@app.route('/python/<text>', strict_slashes=False)
 def python_iscool(text):
     """ """
     return "Python {}".format(text.replace("_", " "))
