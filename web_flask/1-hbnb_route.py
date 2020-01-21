@@ -10,6 +10,7 @@ def hbnb():
     """ Flask web app """
     return 'Hello HBNB!'
 
+
 @app.route('/hbnb')
 def display_hbnb():
     """ Flask """
