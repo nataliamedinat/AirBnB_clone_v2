@@ -14,7 +14,6 @@ from os import getenv
 import sqlalchemy as db
 
 
-
 class DBStorage:
     """
     This class is the database storage engine
@@ -81,3 +80,7 @@ class DBStorage:
         Base.metadata.create_all(self.__engine)
         self.__session = scoped_session(sessionmaker(bind=self.__engine,
                                                      expire_on_commit=False))
+
+    def close():
+        """ Call of the close session """
+        self.__session.close()
