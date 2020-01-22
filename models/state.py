@@ -26,5 +26,5 @@ if getenv('HBNB_TYPE_STORAGE') != 'db':
         """ Return list ofcity linked to the current state """
         from models import storage
         from models import City
-        return [value for key, key in storage.all(City).items()
+        return [value for key, value in storage.all(City).items()
                 if value.state_id == self.id]
