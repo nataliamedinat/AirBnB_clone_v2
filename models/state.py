@@ -20,7 +20,7 @@ class State(BaseModel, Base):
                           backref="_state")
 
 
-    if getenv('HBNB_TYPE_STORAGE') != 'db':
+    if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
             """ Return list ofcity linked to the current state """
