@@ -23,8 +23,8 @@ class State(BaseModel, Base):
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
-            """ Return list ofcity linked to the current state """
+            """returns list of City instances with state_id"""
             from models import storage
             from models import City
             return [value for key, value in storage.all(City).items()
-                if value.state_id == self.id]
+                    if value.state_id == self.id]
