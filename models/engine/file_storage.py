@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" file storage class for AirBnB"""
+"""Storage class for AirBnB"""
 import json
 from models.base_model import BaseModel
 from models.user import User
@@ -73,5 +73,5 @@ class FileStorage:
             self.save()
 
     def close(self):
-        """ For deserializing JSON file to objects """
+        """Thread specific storage"""
         self.reload()

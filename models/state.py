@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""This is the state class"""
+""" is the state class"""
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
@@ -19,11 +19,10 @@ class State(BaseModel, Base):
                           cascade="all, delete",
                           backref="_state")
 
-
     if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
-            """returns list of City instances with state_id"""
+            """returns list of City instances with state"""
             from models import storage
             from models import City
             return [value for key, value in storage.all(City).items()
